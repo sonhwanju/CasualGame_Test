@@ -23,7 +23,7 @@ public class Board : MonoBehaviour
 
     private const int MAP_SIZE = 4;
 
-    private bool SameCard => selectedCards[0].CardSO.id == selectedCards[1].CardSO.id;
+    private bool SameCard => selectedCards[0].CardSO.id == selectedCards[1].CardSO.id && selectedCards[0] != selectedCards[1];
 
 
     private void Awake()
@@ -69,9 +69,11 @@ public class Board : MonoBehaviour
 
             Collider2D col = Physics2D.OverlapPoint(mousePos);
 
-            if(col.CompareTag("Card"))
+            if(col != null && col.CompareTag("Card"))
             {
-                Card card = col.GetComponent<Card>();
+                //Card card = col.GetComponent<Card>();
+                //일단 이렇게 되긴 하나 나중에 바꿔야함
+                Card card = cardLayout[(int)mousePos.x, (int)-mousePos.y];
 
                 if (card.CardSO.id == -1) return;
 
@@ -94,6 +96,7 @@ public class Board : MonoBehaviour
                     selectedCards[0] = card;
                 }
             }
+
         }
     }
 
