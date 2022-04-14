@@ -51,7 +51,7 @@ public class Board : MonoBehaviour
 
                 if (i == 4 && j == 4) card.GetComponent<SpriteRenderer>().color = Color.blue;
 
-                cardLayout[j, i] = card;
+                cardLayout[i,j] = card;
             }
         }
 
@@ -121,7 +121,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 1; j < cardLayout.GetLength(1) - 1; j++)
             {
-                if (cardLayout[j, i] == card) return (j, i);
+                if (cardLayout[i,j] == card) return (i,j);
             }
         }
 
