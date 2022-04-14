@@ -19,7 +19,7 @@ public class Board : MonoBehaviour
     List<Point> visitOrder = new List<Point>();
     List<Point> visit = new List<Point>();
 
-    private int[,] dir = {{ 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 }};
+    private int[,] dir = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
 
     private const int MAP_SIZE = 4;
 
@@ -39,7 +39,7 @@ public class Board : MonoBehaviour
         {
             for (int j = 0; j < cardLayout.GetLength(1); j++)
             {
-                Card card = Instantiate(cardPrefab, new Vector2(j * 1.2f, -i * 1.2f), Quaternion.identity);
+                Card card = Instantiate(cardPrefab, new Vector2(j, -i), Quaternion.identity);
                 card.transform.SetParent(transform);
                 card.Init(CardManager.Instance.GetTestCardSO(0));
                 if (i == 0 || j == 0 || i >= cardLayout.GetLength(0) - 1 || j >= cardLayout.GetLength(1) - 1)
@@ -63,40 +63,47 @@ public class Board : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             Vector2 mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
 
-            Collider2D col = Physics2D.OverlapPoint(mousePos);
+            int x = Mathf.RoundToInt(mousePos.x);
+            int y = Mathf.RoundToInt(-mousePos.y);
+            print(mousePos);
 
-            if(col != null && col.CompareTag("Card"))
+            if (x < 0 || y < 0 || x >= cardLayout.GetLength(0) || y >= cardLayout.GetLength(1))
             {
-                //Card card = col.GetComponent<Card>();
-                //일단 이렇게 되긴 하나 나중에 바꿔야함
-                Card card = cardLayout[(int)mousePos.x, (int)-mousePos.y];
-
-                if (card.CardSO.id == -1) return;
-
-                if(selectedCards[0] != null)
-                {
-                    selectedCards[1] = card;
-
-                    //검사
-                    if(SameCard)
-                    {
-                        (int startX, int startY) = GetTargetXY(selectedCards[0]);
-                        (int nextX, int nextY) = GetTargetXY(selectedCards[1]);
-
-                        FindPath(startX, startY, nextX, nextY);
-                    }
-                    InitSelectedCard();
-                }
-                else
-                {
-                    selectedCards[0] = card;
-                }
+                InitSelectedCard();
+                return;
             }
 
+            Card card = cardLayout[x, y];
+
+            if (card.CardSO.id == -1)
+            {
+                InitSelectedCard();
+                return;
+            }
+
+            if (selectedCards[0] != null)
+            {
+                selectedCards[1] = card;
+                print("Asd");
+                //검사
+                if (SameCard)
+                {
+                    (int startX, int startY) = GetTargetXY(selectedCards[0]);
+                    (int nextX, int nextY) = GetTargetXY(selectedCards[1]);
+
+                    FindPath(startX, startY, nextX, nextY);
+                }
+                InitSelectedCard();
+            }
+            else
+            {
+                print("else");
+                selectedCards[0] = card;
+            }
         }
     }
 
@@ -108,7 +115,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public (int,int) GetTargetXY(Card card)
+    public (int, int) GetTargetXY(Card card)
     {
         for (int i = 1; i < cardLayout.GetLength(0) - 1; i++)
         {
@@ -121,13 +128,13 @@ public class Board : MonoBehaviour
         return (-1, -1);
     }
 
-    public void FindPath(int startX,int startY, int targetX, int targetY)
+    public void FindPath(int startX, int startY, int targetX, int targetY)
     {
         q.Clear();
         visit.Clear();
         visitOrder.Clear();
 
-        Point start =  new Point(startX, startY, -1, 0);
+        Point start = new Point(startX, startY, -1, 0);
         start.before = null;
         q.Enqueue(start);
 
@@ -142,7 +149,7 @@ public class Board : MonoBehaviour
                 break;
             }
 
-          
+
             for (int i = 0; i < dir.GetLength(0); i++)
             {
                 if (p.dir != -1 && Mathf.Abs(p.dir - i) == 2) continue;
@@ -151,15 +158,15 @@ public class Board : MonoBehaviour
                 int nextY = p.y + dir[i, 1];
                 int nextCnt = (p.dir == i || p.dir == -1) ? p.turnCount : p.turnCount + 1; //방향이 다를 시
 
-                if (nextX < 0 || nextY < 0 || nextX >= MAP_SIZE + 2 || nextY >= MAP_SIZE + 2 
-                    || (cardLayout[nextX, nextY].CardSO.id != -1 && cardLayout[nextX,nextY].CardSO.id != cardLayout[targetX,targetY].CardSO.id)) continue;
+                if (nextX < 0 || nextY < 0 || nextX >= MAP_SIZE + 2 || nextY >= MAP_SIZE + 2
+                    || (cardLayout[nextX, nextY].CardSO.id != -1 && cardLayout[nextX, nextY].CardSO.id != cardLayout[targetX, targetY].CardSO.id)) continue;
 
-                if(nextCnt <= 2)
+                if (nextCnt <= 2)
                 {
                     Point curPoint = new Point(nextX, nextY, i, nextCnt);
                     curPoint.before = p;
                     q.Enqueue(curPoint);
-                  
+
                 }
             }
         }
@@ -174,7 +181,7 @@ public class Board : MonoBehaviour
             last = last.before;
             visitOrder.Add(last);
             cnt++;
-            if(cnt >= 10000)
+            if (cnt >= 10000)
             {
                 Debug.LogError("asd");
                 break;
@@ -187,8 +194,9 @@ public class Board : MonoBehaviour
 
         for (int i = 0; i < visitOrder.Count; i++)
         {
-            line.lineRenderer.SetPosition(i, new Vector3(visitOrder[i].x * 1.2f, visitOrder[i].y * -1.2f, -1));
+            //line.lineRenderer.SetPosition(i, new Vector3(visitOrder[i].x * 1.2f, visitOrder[i].y * -1.2f, -1));
+            line.lineRenderer.SetPosition(i, new Vector3(visitOrder[i].x, -visitOrder[i].y, -1));
         }
-       
+
     }
 }
