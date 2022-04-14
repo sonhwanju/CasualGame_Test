@@ -87,11 +87,7 @@ public class Board : MonoBehaviour
 
                         FindPath(startX, startY, nextX, nextY);
                     }
-
-                    for (int i = 0; i < selectedCards.Length; i++)
-                    {
-                        selectedCards[i] = null;
-                    }
+                    InitSelectedCard();
                 }
                 else
                 {
