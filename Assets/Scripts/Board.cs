@@ -71,9 +71,13 @@ public class Board : MonoBehaviour
 
             if(col.CompareTag("Card"))
             {
-                if(selectedCards[0]!= null && selectedCards[0].CardSO != null)
+                Card card = col.GetComponent<Card>();
+
+                if (card.CardSO.id == -1) return;
+
+                if(selectedCards[0] != null)
                 {
-                    selectedCards[1] = col.GetComponent<Card>();
+                    selectedCards[1] = card;
 
                     //°Ë»ç
                     if(SameCard)
@@ -83,23 +87,25 @@ public class Board : MonoBehaviour
 
                         FindPath(startX, startY, nextX, nextY);
                     }
-                    else
+
+                    for (int i = 0; i < selectedCards.Length; i++)
                     {
-                        for (int i = 0; i < selectedCards.Length; i++)
-                        {
-                            selectedCards[i] = null;
-                        }
+                        selectedCards[i] = null;
                     }
-                }
-                else if(selectedCards[0] != null)
-                {
-                    selectedCards[0] = null;
                 }
                 else
                 {
-                    selectedCards[0] = col.GetComponent<Card>();
+                    selectedCards[0] = card;
                 }
             }
+        }
+    }
+
+    public void InitSelectedCard()
+    {
+        for (int i = 0; i < selectedCards.Length; i++)
+        {
+            selectedCards[i] = null;
         }
     }
 
