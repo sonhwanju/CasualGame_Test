@@ -47,7 +47,7 @@ public class Board : MonoBehaviour
                     card.GetComponent<SpriteRenderer>().color = Color.black;
                 }
 
-                if (j == 2 && i == 1) card.GetComponent<SpriteRenderer>().color = Color.red;
+                if (j == 1 && i == 2) card.GetComponent<SpriteRenderer>().color = Color.red;
 
                 if (i == 4 && j == 4) card.GetComponent<SpriteRenderer>().color = Color.blue;
 
@@ -57,7 +57,7 @@ public class Board : MonoBehaviour
 
         selectedCards = new Card[2];
 
-        cardLayout[2, 1].Init(CardManager.Instance.GetTestCardSO());
+        cardLayout[1, 2].Init(CardManager.Instance.GetTestCardSO());
         cardLayout[4, 4].Init(CardManager.Instance.GetTestCardSO());
     }
 
