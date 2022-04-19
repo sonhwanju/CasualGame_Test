@@ -14,6 +14,8 @@ public class Board : MonoBehaviour
     private List<Point> pList = new List<Point>();
     private Tile firstTile = null;
 
+    private int[,] dir = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
+
     private const int MAP_SIZE = 9;
 
     private bool isDragEnd = false;
@@ -98,6 +100,39 @@ public class Board : MonoBehaviour
         }
     }
 
+    public bool CanMatchedBlocks()
+    {
+        int count = 0;
+
+        for (int x = 0; x < MAP_SIZE; x++)
+        {
+            for (int y = 0; y < MAP_SIZE; y++)
+            {
+                Tile t = tileLayout[x, y];
+
+                for (int d = 0; d < dir.GetLength(0); d++)
+                {
+                    int nextX = x + dir[d,0];
+                    int nextY = y + dir[d, 1];
+
+                    if (NotInBoard(nextX, nextY)) continue;
+
+                    if (t.TileType == tileLayout[nextX, nextY].TileType) count++;
+                }
+
+                if(count > 1)
+                {
+                    return true;
+                }
+
+                count = 0;
+            }
+        }
+
+        return false;
+    }
+
+
     public void DropBlocks()
     {
         for (int i = MAP_SIZE - 1; i >= 0; i--)
@@ -150,6 +185,30 @@ public class Board : MonoBehaviour
                     t.TileType = TileManager.Instance.GetRandomTileType();
                     t.ChangeColor((int)t.TileType);
                 }
+            }
+        }
+
+        int cnt = 0;
+        while (!CanMatchedBlocks())
+        {
+            InitBlock();
+            cnt++;
+            if(cnt >= 10000)
+            {
+                return;
+            }
+        }
+    }
+    public void InitBlock()
+    {
+        for (int x = 0; x < MAP_SIZE; x++)
+        {
+            for (int y = 0; y < MAP_SIZE; y++)
+            {
+                Tile t = tileLayout[x, y];
+
+                t.TileType = TileManager.Instance.GetRandomTileType();
+                t.ChangeColor((int)t.TileType);
             }
         }
     }
