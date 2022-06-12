@@ -59,6 +59,9 @@ public class Board : MonoBehaviour
 
         cardLayout[1, 2].Init(CardManager.Instance.GetTestCardSO());
         cardLayout[4, 4].Init(CardManager.Instance.GetTestCardSO());
+
+        cardLayout[1, 3].Init(CardManager.Instance.GetTestCardSO(2));
+        cardLayout[2, 2].Init(CardManager.Instance.GetTestCardSO(2));
     }
 
     private void Update()
@@ -159,7 +162,7 @@ public class Board : MonoBehaviour
                 int nextCnt = (p.dir == i || p.dir == -1) ? p.turnCount : p.turnCount + 1; //방향이 다를 시
 
                 if (nextX < 0 || nextY < 0 || nextX >= MAP_SIZE + 2 || nextY >= MAP_SIZE + 2
-                    || (cardLayout[nextX, nextY].CardSO.id != -1 && cardLayout[nextX, nextY].CardSO.id != cardLayout[targetX, targetY].CardSO.id)) continue;
+                    ||(cardLayout[nextX, nextY].CardSO.id != -1 && cardLayout[nextX, nextY].CardSO.id != cardLayout[targetX, targetY].CardSO.id)) continue;
 
                 if (nextCnt <= 2)
                 {
@@ -179,6 +182,7 @@ public class Board : MonoBehaviour
         while (last.before != null)
         {
             last = last.before;
+            print(JsonUtility.ToJson(last));
             visitOrder.Add(last);
             cnt++;
             if (cnt >= 10000)
